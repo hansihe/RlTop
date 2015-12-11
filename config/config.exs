@@ -33,6 +33,6 @@ config :rl_tools, :rl_api,
   callProcKey: "pX9pn8F4JnBpoO8Aa219QC6N7g18FJ0F"
 
 config :quantum, cron: [
-  "*/30 * * * *": {"RlTools.Fetcher.Scheduler", :cron_run_fetch} #&RlTools.Fetcher.Scheduler.cron_run_fetch/0
+  "*/15 * * * *": {"RlTools.Fetcher.Scheduler", :cron_run_fetch} #&RlTools.Fetcher.Scheduler.cron_run_fetch/0
   
 ]

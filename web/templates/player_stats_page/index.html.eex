@@ -27,8 +27,23 @@
         <div class="mdl-typography--display-1"><%= @player.name %></div>
         <div><%= @player.platform %></div>
       </div>
-      <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-shadow--2dp mdl-color--white">
-        Woohoo
+      <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-shadow--2dp mdl-color--white mdl-grid">
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
+          <div class="mdl-typography--title">1v1</div>
+          <div class="mdl-typography--headline" id="l_1v1_value">--</div>
+        </div>
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
+          <div class="mdl-typography--title">2v2</div>
+          <div class="mdl-typography--headline" id="l_2v2_value">--</div>
+        </div>
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
+          <div class="mdl-typography--title">3v3 Solo</div>
+          <div class="mdl-typography--headline" id="l_s3v3_value">--</div>
+        </div>
+        <div class="mdl-cell mdl-cell--3-col mdl-cell--4-col-tablet">
+          <div class="mdl-typography--title">3v3</div>
+          <div class="mdl-typography--headline" id="l_3v3_value">--</div>
+        </div>
       </div>
       <div class="mdl-cell mdl-cell--12-col mdl-shadow--2dp mdl-color--white">
         <div id="playerChart"></div>

@@ -6,10 +6,10 @@ var margin = {top: 10 + 16, right: 10 + 32, bottom: 100 + 16, left: 40 + 32},
     height = 500 - margin.top - margin.bottom,
     height2 = 500 - margin2.top - margin2.bottom;
 
-var x = d3.time.scale().range([width, 0]),
-    x2 = d3.time.scale().range([width, 0]),
-    y = d3.scale.linear().range([0, height]),
-    y2 = d3.scale.linear().range([0, height2]);
+var x = d3.time.scale().range([0, width]),
+    x2 = d3.time.scale().range([0, width]),
+    y = d3.scale.linear().range([height, 0]),
+    y2 = d3.scale.linear().range([height2, 0]);
 
 var xAxis = d3.svg.axis().scale(x).orient("bottom"),
     xAxis2 = d3.svg.axis().scale(x2).orient("bottom"),
@@ -54,8 +54,8 @@ function resize() {
     width = +(d3.select("#playerChart").style("width").replace("px", ""));
     console.log(d3.select("#playerChart").style("width"));
     width = width - margin.left - margin.right;
-    x.range([width, 0]);
-    x2.range([width, 0]);
+    x.range([0, width]);
+    x2.range([0, width]);
     svg.attr("width", width + margin.left + margin.right);
     clip.attr("width", width);
 }
@@ -64,24 +64,36 @@ resize();
 //76561198187511543
 
 function nestedExtent(nested, accessor) {
-    return [d3.max(nested, function(d) {
-        return d3.max(d, accessor);
-    }), d3.min(nested, function(d) {
+    return [d3.min(nested, function(d) {
         return d3.min(d, accessor);
+    }), d3.max(nested, function(d) {
+        return d3.max(d, accessor);
     })];
 }
 
+function padExtent(extent, padding) {
+    return [extent[0]-padding, extent[1]+padding];
+}
+
 d3.json("/api/player/steam/76561198187511543/values/s3v3,3v3,2v2,1v1", function(data) {
+    console.log(data);
+    
+    var leaderboards = d3.values(data.leaderboards);
+    var leaderboardsLength = leaderboards.length;
+    for (var i = 0; i < leaderboardsLength; i++) {
+        var leaderboard = leaderboards[i];
+        d3.select("#l_" + leaderboard.url_id + "_value").text(leaderboard.current[1]);
+    }
+
     var lines = d3.values(data.leaderboards).map(function(d) { return d; });
     var lines_values = lines.map(function(d) {
         return d.values.map(function(v) {
             return [parseTime(v[0]), v[1]];
         });
     });
-    console.log(lines_values);
 
     x.domain(nestedExtent(lines_values, function(d) { return d[0]; }));
-    y.domain(nestedExtent(lines_values, function(d) { return d[1]; }));
+    y.domain(padExtent(nestedExtent(lines_values, function(d) { return d[1]; }), 10));
     x2.domain(x.domain());
     y2.domain(y.domain());
 
@@ -121,7 +133,7 @@ d3.json("/api/player/steam/76561198187511543/values/s3v3,3v3,2v2,1v1", function(
 
 function brushed() {
     var extent = brush.extent();
-    x.domain(brush.empty() ? x2.domain() : [extent[1], extent[0]]);
+    x.domain(brush.empty() ? x2.domain() : extent);
     focus.selectAll(".line").attr("d", area);
     focus.select(".x.axis").call(xAxis);
 }

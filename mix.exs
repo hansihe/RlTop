@@ -39,8 +39,7 @@ defmodule RlTools.Mixfile do
      {:httpoison, "~> 0.8.0"},
      {:poolboy, "~> 1.5"},
      {:ecto_enum, "~> 0.3.0"},
-     {:quantum, ">= 1.6.0"},
-     {:exrm, "~> 1.0.0-rc7"}]
+     {:quantum, ">= 1.6.0"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

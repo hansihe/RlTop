@@ -1,0 +1,40 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header mdl-layout--fixed-tabs">
+
+  <header class="mdl-layout__header id-casting-shadow">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Rocket League Top</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+    <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+      <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Tab 1</a>
+      <a href="#fixed-tab-2" class="mdl-layout__tab">Tab 2</a>
+      <a href="#fixed-tab-3" class="mdl-layout__tab">Tab 3</a>
+    </div>
+  </header>
+
+  <div class="mdl-layout__drawer">
+    <nav class="sidebar-navigation mdl-navigation">
+      <a class="mdl-navigation__link">
+        <i class="material-icons" role="presentation">person</i>
+        Player
+      </a>
+      <a class="mdl-navigation__link">
+        <i class="material-icons" role="presentation">list</i>
+        Leaderboards
+      </a>
+      <div class="mdl-layout-spacer"></div>
+    </nav>
+  </div>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <section class="mdl-layout__tab-panel is-active" id="fixed-tab-1">
+
+    </section>
+    <section class="mdl-layout__tab-panel" id="fixed-tab-2">
+
+    </section>
+    <section class="mdl-layout__tab-panel" id="fixed-tab-3">
+
+    </section>
+  </main>
+</div>

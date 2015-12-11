@@ -1,0 +1,76 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+  <header class="mdl-layout__header id-casting-shadow">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Rocket League Top</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <div class="mdl-layout__drawer mdl-color--blue-grey-800">
+    <nav class="sidebar-navigation mdl-navigation">
+      <a class="mdl-navigation__link">
+        <i class="material-icons" role="presentation">person</i>
+        Player
+      </a>
+      <a class="mdl-navigation__link">
+        <i class="material-icons" role="presentation">list</i>
+        Leaderboards
+      </a>
+      <div class="mdl-layout-spacer"></div>
+    </nav>
+  </div>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--middle mdl-shadow--2dp mdl-color--white player-title-card">
+        <div class="mdl-typography--display-1"><%= @player.name %></div>
+        <div><%= @player.platform %></div>
+      </div>
+      <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-shadow--2dp mdl-color--white">
+        Woohoo
+      </div>
+      <div class="mdl-cell mdl-cell--12-col mdl-shadow--2dp mdl-color--white">
+        <div id="playerChart"></div>
+      </div>
+    </div>
+    <!--<script src="<%= static_path(@conn, "/js/player_stats_page.js") %>"></script>-->
+    <script src="<%= static_path(@conn, "/js/player_stats_page_2.js") %>"></script>
+    <style>
+  svg {
+    font: 10px sans-serif;
+  }
+
+            .area {
+              fill: steelblue;
+            }
+
+            .line {
+              fill: none;
+              stroke: steelblue;
+              clip-path: url(#clip);
+              /*shape-rendering: crispEdges;*/
+            }
+
+            .axis path,
+            .axis line {
+              fill: none;
+              stroke: #000;
+              shape-rendering: crispEdges;
+            }
+
+            .brush .extent {
+              stroke: #fff;
+              fill-opacity: .125;
+              shape-rendering: crispEdges;
+            }
+    </style>
+
+    <style>
+  .player-title-card {
+    padding: 16px 32px;
+  }
+    </style>
+  </main>
+
+</div>

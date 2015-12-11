@@ -75,7 +75,12 @@ function padExtent(extent, padding) {
     return [extent[0]-padding, extent[1]+padding];
 }
 
-d3.json("/api/player/steam/76561198187511543/values/s3v3,3v3,2v2,1v1", function(data) {
+var player_id = d3.select("meta[name='player_id']").attr("content");
+var player_platform = d3.select("meta[name='player_platform']").attr("content");
+console.log(player_id);
+console.log(player_platform);
+
+d3.json("/api/player/" + player_platform + "/" + player_id + "/values/s3v3,3v3,2v2,1v1", function(data) {
     console.log(data);
     
     var leaderboards = d3.values(data.leaderboards);

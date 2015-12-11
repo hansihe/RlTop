@@ -4,6 +4,15 @@
 /deps
 /*.ez
 
+/rel
+
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
 # Generate on crash by the VM
 erl_crash.dump
 

@@ -1,5 +1,8 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
 
+  <meta name="player_id" content="<%= @player.player_id %>">
+  <meta name="player_platform" content="<%= @player.platform %>">
+
   <header class="mdl-layout__header id-casting-shadow">
     <div class="mdl-layout__header-row">
       <span class="mdl-layout-title">Rocket League Top</span>

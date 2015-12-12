@@ -11,19 +11,7 @@
     </div>
   </header>
 
-  <div class="mdl-layout__drawer mdl-color--blue-grey-800">
-    <nav class="sidebar-navigation mdl-navigation">
-      <a class="mdl-navigation__link">
-        <i class="material-icons" role="presentation">person</i>
-        Player
-      </a>
-      <a class="mdl-navigation__link">
-        <i class="material-icons" role="presentation">list</i>
-        Leaderboards
-      </a>
-      <div class="mdl-layout-spacer"></div>
-    </nav>
-  </div>
+  <%= render RlTools.SharedView, "side_drawer.html", conn: @conn, current: :leaderboards %>
 
   <main class="mdl-layout__content mdl-color--grey-100">
     <div class="mdl-grid">

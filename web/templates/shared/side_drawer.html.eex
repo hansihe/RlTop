@@ -1,0 +1,13 @@
+<div class="mdl-layout__drawer">
+  <nav class="sidebar-navigation mdl-navigation">
+    <a class="mdl-navigation__link" href="<%= leaderboard_page_path @conn, :index %>">
+      <i class="material-icons" role="presentation">list</i>
+      Leaderboards
+    </a>
+    <a class="mdl-navigation__link">
+      <i class="material-icons" role="presentation">person</i>
+      Player
+    </a>
+    <div class="mdl-layout-spacer"></div>
+  </nav>
+</div>

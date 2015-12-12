@@ -6,35 +6,43 @@
       <div class="mdl-layout-spacer"></div>
     </div>
     <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-      <a href="#fixed-tab-1" class="mdl-layout__tab is-active">Tab 1</a>
+      <%= for leaderboard <- @leaderboards do %>
+        <a href="#leaderboard_<%= leaderboard.api_id %>" class="mdl-layout__tab <%= if leaderboard.id == 1, do: "is-active" %>"><%= leaderboard.name %></a>
+      <% end %>
+      <!--<a href="#fixed-tab-1" class="mdl-layout__tab is-active">Tab 1</a>
       <a href="#fixed-tab-2" class="mdl-layout__tab">Tab 2</a>
-      <a href="#fixed-tab-3" class="mdl-layout__tab">Tab 3</a>
+      <a href="#fixed-tab-3" class="mdl-layout__tab">Tab 3</a>-->
     </div>
   </header>
 
-  <div class="mdl-layout__drawer">
-    <nav class="sidebar-navigation mdl-navigation">
-      <a class="mdl-navigation__link">
-        <i class="material-icons" role="presentation">person</i>
-        Player
-      </a>
-      <a class="mdl-navigation__link">
-        <i class="material-icons" role="presentation">list</i>
-        Leaderboards
-      </a>
-      <div class="mdl-layout-spacer"></div>
-    </nav>
-  </div>
+  <%= render RlTools.SharedView, "side_drawer.html", conn: @conn %>
 
   <main class="mdl-layout__content mdl-color--grey-100">
-    <section class="mdl-layout__tab-panel is-active" id="fixed-tab-1">
-
-    </section>
-    <section class="mdl-layout__tab-panel" id="fixed-tab-2">
-
-    </section>
-    <section class="mdl-layout__tab-panel" id="fixed-tab-3">
-
-    </section>
+    <%= for {leaderboard, index} <- Enum.with_index(@leaderboards) do %>
+      <section class="mdl-layout__tab-panel <%= if leaderboard.id == 1, do: "is-active" %>" id="leaderboard_<%= leaderboard.api_id %>">
+        <div style="max-width: 600px;" class="mdl-grid">
+          <table style="width: 100%;" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th class="mdl-data-table__cell--non-numeric">Name</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= for {player, player_index} <- Enum.with_index(Enum.fetch!(@leaderboard_values, index)) do %>
+                <tr>
+                  <td><%= player_index + 1 %></td>
+                  <td class="mdl-data-table__cell--non-numeric">
+                    <a href="<%= player_stats_page_path @conn, :index, player.player.platform, player.player.player_id %>"><%= player.player.name %></a>
+                  </td>
+                  <td><%= player.value %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    <% end %>
   </main>
 </div>

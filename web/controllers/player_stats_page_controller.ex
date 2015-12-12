@@ -11,7 +11,9 @@ defmodule RlTools.PlayerStatsPageController do
     player = RlTools.Repo.one!(from(p in RlTools.Player, 
         where: p.platform == ^platform and p.player_id == ^player_id))
     IO.inspect player
-    render conn, "index.html", %{
+    conn
+    |> assign(:title, "Player: " <> player.name)
+    |> render "index.html", %{
       player: player
     }
   end

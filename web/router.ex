@@ -19,9 +19,8 @@ defmodule RlTools.Router do
   scope "/", RlTools do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", LeaderboardPageController, :index
     get "/player/:platform/:player_id", PlayerStatsPageController, :index
-    get "/leaderboard", LeaderboardPageController, :index
   end
 
   scope "/api", RlTools do

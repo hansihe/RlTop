@@ -1,12 +1,15 @@
 defmodule RlTools.Router do
   use RlTools.Web, :router
 
+  def put_empty_title(conn, _), do: conn |> assign(:title, nil)
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :put_empty_title
   end
 
   pipeline :api do

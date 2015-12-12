@@ -10,12 +10,13 @@
     <title>Hello Phoenix!</title>
 
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.blue-red.min.css" />
-    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
+ <!--<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <script src="<%= static_path(@conn, "/js/d3.js") %>"></script>
+    <script src="<%= static_path(@conn, "/js/bundle.js") %>"></script>
+    <!--<script src="<%= static_path(@conn, "/js/d3.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/c3.js") %>"></script>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/c3.css") %>">
+ <link rel="stylesheet" href="<%= static_path(@conn, "/css/c3.css") %>">-->
 
     <style>
       .sidebar-navigation {

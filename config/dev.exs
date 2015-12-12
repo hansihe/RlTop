@@ -12,7 +12,7 @@ config :rl_tools, RlTools.Endpoint,
   code_reloader: true,
   cache_static_lookup: false,
   check_origin: false,
-  watchers: []
+  watchers: [node: ["node_modules/webpack/bin/webpack.js", "--watch"]]
 
 # Watch static and templates for browser reloading.
 config :rl_tools, RlTools.Endpoint,

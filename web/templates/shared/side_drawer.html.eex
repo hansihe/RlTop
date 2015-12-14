@@ -4,7 +4,7 @@
       <i class="material-icons" role="presentation">list</i>
       Leaderboards
     </a>
-    <a class="mdl-navigation__link">
+    <a class="mdl-navigation__link" href="<%= player_lookup_page_path @conn, :index %>">
       <i class="material-icons" role="presentation">person</i>
       Player
     </a>

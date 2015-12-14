@@ -34,7 +34,6 @@ defmodule RLApi do
 
   def call_procset(%RLApi.Session{} = session, %RLApi.ProcSet{} = procset) do
     IO.inspect "Call ProcSet"
-    IO.inspect procset
     query = RLApi.ProcSet.to_query(procset)
     headers = [{:"Content-Type", "application/x-www-form-urlencoded"} | RLApi.Session.request_headers(session)]
     response = HTTPoison.post!(proc_url(session), query, headers)

@@ -21,6 +21,8 @@ defmodule RlTools.Router do
 
     get "/", LeaderboardPageController, :index
     get "/player/:platform/:player_id", PlayerStatsPageController, :index
+    get "/player/lookup", PlayerLookupPageController, :index
+    post "/player/lookup", PlayerLookupPageController, :lookup
   end
 
   scope "/api", RlTools do

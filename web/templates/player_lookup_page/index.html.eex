@@ -1,0 +1,49 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header mdl-layout--fixed-tabs">
+
+  <style>
+    
+  </style>
+
+  <header class="mdl-layout__header id-casting-shadow">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Rocket League Top</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <%= render RlTools.SharedView, "side_drawer.html", conn: @conn %>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid" style="max-width: 800px;">
+      <div class="mdl-color--white mdl-shadow--2dp mdl-cell mdl-cell--12-col" style="padding: 16px 32px;">
+        <h3>Player Lookup</h3>
+        <p>The system can not log ranks for players who are not added to the system. Players who are platinum will be added automatically. Non platinum players can also be tracked by entering their profile information in this form.</p>
+        <p>A steam player can be added by putting their profile url in the field below. A PSN player can be added by entering their PSN ID.</p>
+        <form method="post" action="<%= player_lookup_page_path @conn, :lookup %>">
+          <input type="hidden" name="_csrf_token" value="<%= @csrf_token %>">
+          <div>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-steam">
+              <input type="radio" id="option-steam" class="mdl-radio__button" name="platform" value="steam" checked>
+              <span class="mdl-radio__label">Steam</span>
+            </label>
+            <label class="mdl-radio mdl-js-radio mdl-js-ripple-effect" for="option-psn">
+              <input type="radio" id="option-psn" class="mdl-radio__button" name="platform" value="psn">
+              <span class="mdl-radio__label">PSN</span>
+            </label>
+          </div>
+
+          <div class="mdl-textfield mdl-js-textfield">
+            <input class="mdl-textfield__input" type="text" name="value" id="value-field">
+            <label class="mdl-textfield__label" for="value-field">Steam Profile or PSN ID</label>
+          </div>
+
+          <div>
+            <div class="mdl-layout-spacer"></div>
+            <button class="mdl-button mdl-js-button mdl-js-ripple-effect">Add Player</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+</div>

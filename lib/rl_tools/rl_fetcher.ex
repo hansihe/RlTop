@@ -8,6 +8,7 @@ end
 defmodule RlTools.Fetcher.SessionServer do
   use GenServer
   import RlTools.Fetcher.Util, only: [system_time: 0]
+  require Logger
 
   @session_expire_millis 4000
 
@@ -26,22 +27,27 @@ defmodule RlTools.Fetcher.SessionServer do
   end
 
   def login_session(session) do
-    RLApi.login!(session)
+    RLApi.login(session)
   end
 
   def update_if_expired({time, session}) do
     if (time + @session_expire_millis) < system_time do
-      {system_time, RLApi.Session.make_from_config |> login_session}
+      case RLApi.Session.make_from_config |> login_session do
+        {:ok, session} -> {:ok, {system_time, session}}
+        {:error, resp} -> 
+          Logger.warn "Error in response from RL auth server", response: resp
+          {:error, resp}
+      end
     else
-      {time, session}
+      {:ok, {time, session}}
     end
   end
 
   def handle_call(:get_session, _, state) do
-    #IO.inspect state
-    state = {time, session} = update_if_expired(state)
-    #IO.inspect state
-    {:reply, session, state}
+    case update_if_expired(state) do
+      {:ok, state = {_, session}} -> {:reply, {:ok, session}, state}
+      {:error, _} -> {:reply, {:error}, state}
+    end
   end
 end
 
@@ -50,8 +56,6 @@ end
 
 defmodule RlTools.Fetcher.Scheduler do
   use GenServer
-
-  @fetch_pass_period_millis 1000 * 60 * 30 # Half an hour
 
   alias RlTools.Fetcher.DbOperations
   alias RlTools.Fetcher.ApiUtils
@@ -67,17 +71,11 @@ defmodule RlTools.Fetcher.Scheduler do
   end
 
   def init(:ok) do
-    #last_fetch = DbOperations.get_last_fetch_datetime()
-    #IO.inspect last_fetch
-    #case last_fetch do
-      #  nil -> send(self(), :run_fetch_pass)
-      #time -> throw "Implement this" #TODO: Do this properly
-      #end
     {:ok, nil}
   end
 
   def register_leaderboards_top_players do
-    session = RlTools.Fetcher.SessionServer.get_session
+    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
     players = ApiUtils.get_leaderboards_top_players(session)
 
     Enum.each(players, fn({_, player_kv}) ->
@@ -87,7 +85,7 @@ defmodule RlTools.Fetcher.Scheduler do
 
 
   def fetch_players(fetch_pass, platform) do
-    session = RlTools.Fetcher.SessionServer.get_session
+    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
     leaderboards = RlTools.Repo.all(RlTools.Leaderboard)
     players = DbOperations.get_unfetched_players_for_pass(fetch_pass, platform)
 
@@ -112,7 +110,7 @@ defmodule RlTools.Fetcher.Scheduler do
   def handle_cast(:run_fetch_pass, state) do
     {:ok, fetch_pass} = DbOperations.insert_fetch_pass()
 
-    session = RlTools.Fetcher.SessionServer.get_session
+    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
 
     register_leaderboards_top_players()
     fetch_players(fetch_pass, :steam)

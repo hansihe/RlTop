@@ -105,10 +105,15 @@ defmodule RlTools.Fetcher.Scheduler do
   end
   def handle_cast(:run_session_keepalive, state) do
     {:ok, session} = RlTools.Fetcher.SessionServer.get_session
-    proc = %RLApi.Proc{
-      proc: "GetGenericDataAll",
-      params: []}
-    RLApi.call_procset(session, %RLApi.ProcSet{} |> RLApi.ProcSet.call(proc))
+
+    query = "&PlaylistID=0&NumLocalPlayers=1"
+    headers = [{:"Content-Type", "application/x-www-form-urlencoded"} | RLApi.Session.request_headers(session)]
+    response = HTTPoison.post!(session.baseUrl <> "/Population/UpdatePlayerCurrentGame/", query, headers)
+    case response.body do
+      "" -> nil # Everything is fine :D
+      _ -> throw "Session invalid, please provide new!" # Should probably notify me
+    end
+
     {:noreply, state}
   end
 end

@@ -48,15 +48,21 @@ defmodule RlTools.PlayerLookupPageController do
   def lookup(conn, %{"platform" => platform, "value" => value}) do
     platform_atom = platform_to_atom(platform)
     player_id = value_to_id(platform_atom, value)
-    
+
     case player_id do
       {:ok, id} -> 
-        result = RlTools.Fetcher.ApiDbUtils.fetch_players(nil, platform_atom, [id])
-        found_player = not Enum.empty?(hd(result))
-        if found_player do
-          redirect conn, to: RlTools.Router.Helpers.player_stats_page_path(RlTools.Endpoint, :index, platform, id)
-        else
-          text conn, "Player not found :("
+        player = RlTools.Repo.one(from(p in RlTools.Player,
+            where: p.player_id == ^id and p.platform == ^platform_atom))
+        case player do
+          nil ->
+            result = RlTools.Fetcher.ApiDbUtils.fetch_players(nil, platform_atom, [id])
+            found_player = not Enum.empty?(hd(result))
+            if found_player do
+              redirect conn, to: RlTools.Router.Helpers.player_stats_page_path(RlTools.Endpoint, :index, platform, id)
+            else
+              text conn, "Player not found :("
+            end
+          pla -> redirect conn, to: RlTools.Router.Helpers.player_stats_page_path(RlTools.Endpoint, :index, platform, pla.player_id)
         end
       {:error, _} -> text conn, "Steam returned an error :("
     end

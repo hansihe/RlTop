@@ -1,28 +1,45 @@
+<% active = "navigation-active" %>
+<% current = assigns[:current] %>
+
 <div class="mdl-layout__drawer">
 
   <style>
-    .mdl-navigation-divider {
+    .navigation-divider {
       width: 100%;
       border-bottom: 1px #ddd solid; 
       margin: 8px 0px;
     }
+    
+    .navigation-active {
+      background-color: #e0e0e0 !important;
+    }
+    .navigation-active:hover {
+      background-color: #d0d0d0 !important;
+    }
+
+    .navigation-no-link:hover {
+      background-color: #fafafa !important;
+    }
   </style>
 
   <nav class="sidebar-navigation mdl-navigation">
-    <a class="mdl-navigation__link">
+    <a class="mdl-navigation__link navigation-no-link">
       <i class="material-icons" role="presentation">list</i>
       Leaderboards
     </a>
     <%= for leaderboard <- get_leaderboards do %>
-      <a class="mdl-navigation__link" href="<%= leaderboard_page_path @conn, :index %>">
+      <a class="mdl-navigation__link 
+        <%= if current == {:leaderboard, leaderboard.id}, do: active %>" 
+         href="<%= leaderboard_page_path @conn, :leaderboard, leaderboard.api_id %>">
         <i class="material-icons" role="presentation">p</i>
         <%= leaderboard.name %>
       </a>
     <% end %>
-    <div class="mdl-navigation-divider"></div>
-    <a class="mdl-navigation__link" href="<%= player_lookup_page_path @conn, :index %>">
+    <div class="navigation-divider"></div>
+    <a class="mdl-navigation__link <%= if current == :player_lookup, do: active %>" 
+       href="<%= player_lookup_page_path @conn, :index %>">
       <i class="material-icons" role="presentation">person</i>
-      Player
+      Lookup Player
     </a>
     <div class="mdl-layout-spacer"></div>
   </nav>

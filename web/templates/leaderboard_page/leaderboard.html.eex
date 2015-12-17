@@ -1,0 +1,37 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+  <header class="mdl-layout__header id-casting-shadow">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Rocket League Top</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <%= render RlTools.SharedView, "side_drawer.html", conn: @conn, current: {:leaderboard, @leaderboard.id} %>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div style="max-width: 600px;" class="mdl-grid">
+      <table style="width: 100%;" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th class="mdl-data-table__cell--non-numeric">Name</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <%= for {player, player_index} <- Enum.with_index(@leaderboard_values) do %>
+            <tr>
+              <td><%= player_index + 1 %></td>
+              <td class="mdl-data-table__cell--non-numeric">
+                <a href="<%= player_stats_page_path @conn, :index, player.player.platform, player.player.player_id %>"><%= player.player.name %></a>
+              </td>
+              <td><%= player.value %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</div>

@@ -35,7 +35,7 @@ defmodule RlTools.Fetcher.SessionServer do
       case RLApi.Session.make_from_config |> login_session do
         {:ok, session} -> {:ok, {system_time, session}}
         {:error, resp} -> 
-          Logger.warn "Error in response from RL auth server", response: resp
+          Logger.warn "Error in response from RL auth server: " <> resp, response: resp
           {:error, resp}
       end
     else
@@ -44,14 +44,14 @@ defmodule RlTools.Fetcher.SessionServer do
   end
 
   def handle_call(:get_session, _, state) do
-    case update_if_expired(state) do
-      {:ok, state = {_, session}} -> {:reply, {:ok, session}, state}
-      {:error, _} -> {:reply, {:error}, state}
-    end
+    conf = Application.get_env(:rl_tools, :rl_api)
+    #case update_if_expired(state) do
+      #  {:ok, state = {_, session}} -> {:reply, {:ok, session}, state}
+      #{:error, _} -> {:reply, {:error}, state}
+      #end
+      st = %{RLApi.Session.make_from_config | authed: true,  sessionId: conf[:session_key]}
+      {:reply, {:ok, st}, state}
   end
-end
-
-defmodule RlTools.Fetcher do
 end
 
 defmodule RlTools.Fetcher.Scheduler do
@@ -65,74 +65,51 @@ defmodule RlTools.Fetcher.Scheduler do
   end
 
   # Called by quantum every time we want to run a fetch.
+  # Also commonly called from repl for testing.
+  # This is safe to call at any time.
   # See config file.
   def cron_run_fetch do
     GenServer.cast(__MODULE__, :run_fetch_pass)
   end
 
+  def cron_keep_session_alive do
+    GenServer.cast(__MODULE__, :run_session_keepalive)
+  end
+
   def init(:ok) do
     {:ok, nil}
   end
 
-  def register_leaderboards_top_players do
-    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
-    players = ApiUtils.get_leaderboards_top_players(session)
-
-    Enum.each(players, fn({_, player_kv}) ->
-      {:ok, _player} = DbOperations.upsert_player(player_kv)
-    end)
-  end
-
-
-  def fetch_players(fetch_pass, platform) do
-    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
-    leaderboards = RlTools.Repo.all(RlTools.Leaderboard)
+  def fetch_players_db(fetch_pass, platform) do
     players = DbOperations.get_unfetched_players_for_pass(fetch_pass, platform)
-
     unless players == [] do
-      player_ids = Enum.map(players, fn(p) -> p.player_id end)
-
-      player_lb_values = RlTools.Fetcher.ApiUtils.get_player_values(
-      platform, session, leaderboards, player_ids)
-
-      Enum.each(player_lb_values, fn({leaderboard, players}) ->
-        Enum.each(players, fn(player) ->
-          {:ok, player_model} = DbOperations.upsert_player(player)
-          {:ok, _} = DbOperations.register_leaderboard_value(
-          leaderboard, fetch_pass, player_model, player.value)
-        end)
-      end)
-
-      fetch_players(fetch_pass, platform)
+      player_ids = for player <- players, do: player.player_id
+      RlTools.Fetcher.ApiDbUtils.fetch_players(fetch_pass, platform, player_ids)
+      fetch_players_db(fetch_pass, platform)
     end
   end
 
   def handle_cast(:run_fetch_pass, state) do
     {:ok, fetch_pass} = DbOperations.insert_fetch_pass()
-
     {:ok, session} = RlTools.Fetcher.SessionServer.get_session
 
-    register_leaderboards_top_players()
-    fetch_players(fetch_pass, :steam)
-    fetch_players(fetch_pass, :psn)
+    RlTools.Fetcher.ApiDbUtils.insert_top_players()
+    fetch_players_db(fetch_pass, :steam)
+    fetch_players_db(fetch_pass, :psn)
+
+    {:ok, fetch_pass} = DbOperations.end_fetch_pass(fetch_pass)
 
     IO.inspect length(RlTools.Repo.all(RlTools.Player))
 
-    #response = RLApi.call_procset(session, get_leaderboards_top_players(session))
-    #IO.inspect response
     {:noreply, state}
   end
-end
-
-defmodule RlTools.Fetcher.FetchWorker do
-  use GenServer
-
-  def start_link([]) do
-    GenServer.start_link(__MODULE__, :ok, [])
-  end
-
-  def init(:ok) do
-    {:ok, nil}
+  def handle_cast(:run_session_keepalive, state) do
+    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
+    proc = %RLApi.Proc{
+      proc: "GetGenericDataAll",
+      params: []}
+    RLApi.call_procset(session, %RLApi.ProcSet{} |> RLApi.ProcSet.call(proc))
+    {:noreply, state}
   end
 end
 
@@ -144,16 +121,8 @@ defmodule RlTools.Fetcher.Supervisor do
   end
 
   def init(:ok) do
-    pool_options = [
-      name: {:local, :rl_fetcher_pool},
-      worker_module: RlTools.Fetcher.FetchWorker,
-      size: 4,
-      max_overflow: 0
-    ]
-
     children = [
       worker(RlTools.Fetcher.SessionServer, []),
-      :poolboy.child_spec(:rl_fetcher_pool, pool_options, []),
       worker(RlTools.Fetcher.Scheduler, [])
     ]
 

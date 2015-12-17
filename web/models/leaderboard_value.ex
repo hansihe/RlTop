@@ -12,8 +12,8 @@ defmodule RlTools.LeaderboardValue do
     belongs_to :fetch_pass, RlTools.FetchPass
   end
 
-  @required_fields ~w(value player_id leaderboard_id fetch_pass_id time value_num has_changed)
-  @optional_fields ~w()
+  @required_fields ~w(value player_id leaderboard_id time value_num has_changed)
+  @optional_fields ~w(fetch_pass_id)
 
   @doc """
   Creates a changeset based on the `model` and `params`.

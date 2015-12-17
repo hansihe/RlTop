@@ -16,6 +16,8 @@
     "babel-loader": "^5.1.4",
     "babel-runtime": "^5.8.29",
     "exports-loader": "^0.6.2",
+    "node-sass": "^3.4.2",
+    "sass-loader": "^3.1.2",
     "webpack": "^1.11.0"
   },
   "dependencies": {

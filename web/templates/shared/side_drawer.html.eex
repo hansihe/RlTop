@@ -1,9 +1,25 @@
 <div class="mdl-layout__drawer">
+
+  <style>
+    .mdl-navigation-divider {
+      width: 100%;
+      border-bottom: 1px #ddd solid; 
+      margin: 8px 0px;
+    }
+  </style>
+
   <nav class="sidebar-navigation mdl-navigation">
-    <a class="mdl-navigation__link" href="<%= leaderboard_page_path @conn, :index %>">
+    <a class="mdl-navigation__link">
       <i class="material-icons" role="presentation">list</i>
       Leaderboards
     </a>
+    <%= for leaderboard <- get_leaderboards do %>
+      <a class="mdl-navigation__link" href="<%= leaderboard_page_path @conn, :index %>">
+        <i class="material-icons" role="presentation">p</i>
+        <%= leaderboard.name %>
+      </a>
+    <% end %>
+    <div class="mdl-navigation-divider"></div>
     <a class="mdl-navigation__link" href="<%= player_lookup_page_path @conn, :index %>">
       <i class="material-icons" role="presentation">person</i>
       Player

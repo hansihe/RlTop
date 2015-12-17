@@ -25,7 +25,6 @@ defmodule RlTools.PlayerLookupPageController do
     case HTTPoison.get(@vanity_url_api_base <> "?" <> query) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         parsed = Poison.Parser.parse!(body)
-        IO.inspect parsed
         case parsed do
           %{"response" => %{"success" => 1, "steamid" => id}} -> {:ok, id}
           %{"response" => %{"success" => 42}} -> {:error, :no_user}
@@ -42,12 +41,24 @@ defmodule RlTools.PlayerLookupPageController do
     steam_url_to_id(value_body)
   end
 
+  def lookup_player(:psn, id) do
+    {:ok, session} = RlTools.Fetcher.SessionServer.get_session
+  end
+
   def lookup(conn, %{"platform" => platform, "value" => value}) do
     platform_atom = platform_to_atom(platform)
-    resp = value_to_id(platform_atom, value)
-    case resp do
-      {:ok, id} -> text conn, id
-      {:error, _} -> text conn, "error"
+    player_id = value_to_id(platform_atom, value)
+    
+    case player_id do
+      {:ok, id} -> 
+        result = RlTools.Fetcher.ApiDbUtils.fetch_players(nil, platform_atom, [id])
+        found_player = not Enum.empty?(hd(result))
+        if found_player do
+          redirect conn, to: RlTools.Router.Helpers.player_stats_page_path(RlTools.Endpoint, :index, platform, id)
+        else
+          text conn, "Player not found :("
+        end
+      {:error, _} -> text conn, "Steam returned an error :("
     end
   end
 end

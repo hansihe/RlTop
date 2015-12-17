@@ -3,7 +3,7 @@ defmodule RLApi do
 
   @error_regex ~r/^\w+ ERROR/
 
-  @login_path "/login105/"
+  @login_path "/auth/"
   def login_url(%RLApi.Session{baseUrl: base}), do: base <> @login_path
 
   @proc_path "/callproc105/"
@@ -14,7 +14,8 @@ defmodule RLApi do
       "PlayerName": session.playerName,
       "PlayerID": session.playerId,
       "Platform": session.platform,
-      "BuildID": session.buildId]
+      "BuildID": session.buildId,
+      "IssuerID": session.issuerId]
     headers = [
       "User-Agent": "RLTools (contact: hansihe on reddit)",
       "Content-Type": "application/x-www-form-urlencoded",
@@ -45,9 +46,13 @@ defmodule RLApi do
   end
 
   def test() do
-    proc = RLApi.Proc.LeaderboardUsers.make(:skill, :steam, "10", ["76561198004966749"])
+    #roc = RLApi.Proc.LeaderboardUsers.make(:skill, :steam, "10", ["76561198004966749"])
     #proc2 = %RLApi.Proc{proc: "GetSkillLeaderboard", params: ["10"]}
-    proc2 = RLApi.Proc.Leaderboard.make(:skill, "10")
+    #proc2 = RLApi.Proc.Leaderboard.make(:skill, "10")
+    proc = RLApi.Proc.LeaderboardUser.make(:skill, :steam, "10", "76561198004966749")
+    proc2 = RLApi.Proc.LeaderboardUser.make(:skill, :steam, "10", "765611980049667499")
+
+    
     #GetSkillLeaderboardRankForUsersSteam
     RLApi.Session.make_from_config 
     |> RLApi.login!

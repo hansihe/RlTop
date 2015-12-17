@@ -1,11 +1,20 @@
 defmodule RlTools.LeaderboardPageController do
   use RlTools.Web, :controller
 
+  def leaderboard(conn, %{"leaderboard_id" => id}) do
+    leaderboard = RlTools.Repo.one!(from(l in RlTools.Leaderboard,
+        where: l.api_id == ^id))
+    last_fetch = Repo.one!(from f in RlTools.FetchPass,
+        order_by: [desc: f.time],
+        limit: 1)
+  end
+
   def index(conn, _params) do
     leaderboards = Repo.all(RlTools.Leaderboard)
     last_fetch = Repo.one!(from f in RlTools.FetchPass,
-        order_by: f.time,
+        order_by: [desc: f.time],
         limit: 1)
+    IO.inspect last_fetch
 
     leaderboard_values = for leaderboard <- leaderboards do
       Repo.all(from v in RlTools.LeaderboardValue,
@@ -15,8 +24,6 @@ defmodule RlTools.LeaderboardPageController do
           limit: 100,
           preload: [:player])
     end
-
-    IO.inspect leaderboard_values
 
     render conn, "index.html", %{
       leaderboards: leaderboards,

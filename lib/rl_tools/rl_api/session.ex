@@ -1,6 +1,6 @@
 defmodule RLApi.Session do
-  defstruct playerName: "Dummy User", playerId: "0", platform: "Steam", buildId: "144590275", 
-      loginSecret: nil, callProcKey: nil, db: "BattleCars_Prod", dbVersion: "00.03.0011-00.01.0011",
+  defstruct playerName: "Dummy User", playerId: "0", platform: "Steam", buildId: "64123161", #64123161, 144590275
+      loginSecret: nil, callProcKey: nil, db: "BattleCars_Prod", dbVersion: "00.03.0011-00.01.0011", issuerId: "0",
       baseUrl: "https://psyonix-rl.appspot.com", authed: false, sessionId: nil
 
   def make_from_config() do

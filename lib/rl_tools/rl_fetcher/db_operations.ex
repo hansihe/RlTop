@@ -22,6 +22,10 @@ defmodule RlTools.Fetcher.DbOperations do
     FetchPass.changeset(%FetchPass{}, %{time: Ecto.DateTime.utc})
     |> Repo.insert
   end
+  def end_fetch_pass(fetch_pass) do
+    FetchPass.changeset(fetch_pass, %{end: Ecto.DateTime.utc})
+    |> Repo.update
+  end
 
   def get_unfetched_players_for_pass(fetch_pass, platform, limit \\ 100) do
     fetch_pass_id = fetch_pass.id
@@ -49,7 +53,7 @@ defmodule RlTools.Fetcher.DbOperations do
     |> Repo.insert
 
     case result do
-      {:ok, player} -> {:ok, result}
+      {:ok, player} -> {:ok, player}
       {:error, %{errors: [full_id: "has already been taken"]}} ->
         result = Repo.get_by!(Player, full_id: player.full_id)
         updated = Player.changeset(result, %{
@@ -67,13 +71,15 @@ defmodule RlTools.Fetcher.DbOperations do
   defp get_value_num(last), do: last.value_num + 1
 
   def register_leaderboard_value(%Leaderboard{} = leaderboard, 
-                                 %FetchPass{} = fetch_pass,
+                                 fetch_pass,
                                  %Player{} = player, value) do
     # TODO: Check if one alreay exists (is it needed?)
     {:ok, res} = Repo.transaction(fn ->
-      Player.changeset(player, %{
-        latest_fetch_id: fetch_pass.id })
-      |> Repo.update
+      if fetch_pass != nil do
+        Player.changeset(player, %{
+          latest_fetch_id: fetch_pass.id })
+        |> Repo.update
+      end
 
       last_value = from(v in LeaderboardValue,
           where: v.player_id == ^player.id and v.leaderboard_id == ^leaderboard.id,
@@ -86,7 +92,7 @@ defmodule RlTools.Fetcher.DbOperations do
         value_num: get_value_num(last_value),
         player_id: player.id,
         leaderboard_id: leaderboard.id,
-        fetch_pass_id: fetch_pass.id,
+        fetch_pass_id: (if fetch_pass != nil, do: fetch_pass.id, else: nil),
         value: value,
         time: Ecto.DateTime.utc })
       |> Repo.insert

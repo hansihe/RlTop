@@ -41,6 +41,15 @@
       <i class="material-icons" role="presentation">person</i>
       Lookup Player
     </a>
+    <a class="mdl-navigation__link" href="http://docs.rocketleaguetop.apiary.io/">
+      <i class="material-icons" role="presentation">device_hub</i>
+      API
+    </a>
+    <a class="mdl-navigation__link <%= if current == :about, do: active %>" 
+       href="<%= about_page_path @conn, :about %>">
+      <i class="material-icons" role="presentation">info</i>
+      About
+    </a>
     <div class="mdl-layout-spacer"></div>
   </nav>
 </div>

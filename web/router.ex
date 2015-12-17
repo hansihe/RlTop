@@ -20,8 +20,10 @@ defmodule RlTools.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", LeaderboardPageController, :index
+    get "/about", AboutPageController, :about
     get "/leaderboard/:leaderboard_id", LeaderboardPageController, :leaderboard
     get "/player/:platform/:player_id", PlayerStatsPageController, :index
+
     get "/player/lookup", PlayerLookupPageController, :index
     post "/player/lookup", PlayerLookupPageController, :lookup
   end

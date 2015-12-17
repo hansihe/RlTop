@@ -1,0 +1,21 @@
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+
+  <header class="mdl-layout__header id-casting-shadow">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Rocket League Top</span>
+      <div class="mdl-layout-spacer"></div>
+    </div>
+  </header>
+
+  <%= render RlTools.SharedView, "side_drawer.html", conn: @conn, current: :about %>
+
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--6-col mdl-cell--12-col-tablet mdl-cell--middle mdl-shadow--2dp mdl-color--white" style="padding: 16px 32px;">
+        <h3>The site</h3>
+        <p>This site is written by hansihe. It is currently closed source, but it's meant to be open-sourced as soon as possible. It is written in <a href="http://elixir-lang.org/">Elixir</a>, running on the <a href="https://en.wikipedia.org/wiki/Erlang_(programming_language)">Erlang</a> Virtual Machine (BEAM). Both the webserver and the data fetcher are running in the same Erlang VM. The whole application stores its data in Postgresql, using Ecto as the interface. The webserver is powered by the lovely <a href="http://www.phoenixframework.org/">Phoenix Framework</a>. Using Elixir was a deliberate choice, as it fits very well for this type of application.</p>
+      </div>
+    </div>
+  </main>
+
+</div>
